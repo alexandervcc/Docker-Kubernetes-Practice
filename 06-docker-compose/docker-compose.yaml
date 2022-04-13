@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  rest-db:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mana
+      - MONGO_INITDB_ROOT_PASSWORD=mana
+    networks:
+      - rest-net
+  rest-be:
+    build: ./backend
+    #image: 'rest-back'
+    ports:
+      - '80:80'
+    volumes:
+      - logs:/app/logs        #named volume
+      - ./backend:/app        #bind mount
+      - /app/node_modules     #anonymous volume
+    env_file:
+      - ./env/back.env
+    depends_on:
+      - rest-db
+    networks:
+      - rest-net
+  #rest-fe:
+
+volumes:
+  data:
+  logs:
+
+networks:
+  rest-net:
